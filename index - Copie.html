@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu du Restaurant Plumeria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+            color: #4a4a4a;
+        }
+        .font-display { font-family: 'Playfair Display', serif; }
+
+        /* Cartes catégories colorisées */
+        .category-card {
+            border-radius: 16px;
+            padding: 1rem;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .category-entrees { background: linear-gradient(135deg,#ff9a9e,#ff6a88); }
+        .category-plats { background: linear-gradient(135deg,#6a11cb,#2575fc); }
+        .category-plats-malagasy { background: linear-gradient(135deg,#ff9966,#ff5e62); }
+        .category-desserts { background: linear-gradient(135deg,#f7971e,#ffd200); }
+        .category-accompagnements { background: linear-gradient(135deg,#56ab2f,#a8e063); }
+        .category-apero { background: linear-gradient(135deg,#f953c6,#b91d73); }
+        .category-cocktails { background: linear-gradient(135deg,#36d1dc,#5b86e5); }
+        .category-rhum { background: linear-gradient(135deg,#834d9b,#d04ed6); }
+        .category-bieres { background: linear-gradient(135deg,#f7971e,#ffd200); }
+        .category-eaux { background: linear-gradient(135deg,#2193b0,#6dd5ed); }
+        .category-chaudes { background: linear-gradient(135deg,#ff7e5f,#feb47b); }
+        .category-soft { background: linear-gradient(135deg,#00c6ff,#0072ff); }
+        .category-whisky { background: linear-gradient(135deg,#b92b27,#1565c0); }
+
+        /* Animation boutons produits */
+        .item-card {
+            background-color: rgba(255,255,255,0.9);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.15s ease, background-color 0.2s ease;
+        }
+        .item-card:active {
+            transform: scale(0.95);
+            background-color: rgba(255,255,255,0.7);
+        }
+
+        /* Optimisation mobile */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.75rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.25rem; }
+            .container { padding: 0 0.5rem; }
+            .item-card { padding: 0.75rem; }
+            .btn { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+        }
+
+        /* Boutons généraux */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-primary { background-color: #d9534f; color: #fff; }
+        .btn-primary:hover { background-color: #c9302c; }
+        .btn-secondary { background-color: #f0f0f0; color: #4a4a4a; }
+        .btn-secondary:hover { background-color: #e0e0e0; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center p-4">
+            <h1 class="text-2xl md:text-3xl font-display font-bold text-gray-900">Plumeria Restaurant</h1>
+            <nav class="flex items-center gap-4 text-sm md:text-base">
+                <button id="menu-page-link" class="font-bold text-gray-900 hover:text-orange-500 transition">Menu</button>
+                <button id="drinks-page-link" class="text-gray-600 hover:text-orange-500 transition">Boissons</button>
+                <button id="lang-toggle-btn" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-300 transition">EN</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
+        <section class="lg:flex-1">
+            <h2 class="text-3xl font-display font-bold text-gray-900 mb-4" id="menu-title">Menu</h2>
+            <div id="menu-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Exemple de catégories avec icônes -->
+                <div class="category-card category-entrees">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Entrées</h3>
+                </div>
+                <div class="category-card category-plats">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Plats</h3>
+                </div>
+                <div class="category-card category-plats-malagasy">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Plats Malagasy</h3>
+                </div>
+                <div class="category-card category-desserts">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Desserts</h3>
+                </div>
+                <div class="category-card category-accompagnements">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Accompagnements</h3>
+                </div>
+                <div class="category-card category-apero">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Apéro</h3>
+                </div>
+                <div class="category-card category-cocktails">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Cocktails</h3>
+                </div>
+                <div class="category-card category-rhum">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Rhum</h3>
+                </div>
+                <div class="category-card category-bieres">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Bières</h3>
+                </div>
+                <div class="category-card category-eaux">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Eaux</h3>
+                </div>
+                <div class="category-card category-chaudes">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Boissons chaudes</h3>
+                </div>
+                <div class="category-card category-soft">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Soft</h3>
+                </div>
+                <div class="category-card category-whisky">
+                    <h3 class="text-xl font-display font-semibold mb-3"> Whisky</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panier -->
+        <aside class="w-full lg:w-1/3 p-4 bg-white rounded-xl shadow-md h-fit sticky top-24">
+            <h3 class="text-xl font-display font-bold mb-3" id="cart-title">Votre Panier</h3>
+            <div id="cart-items" class="space-y-3">
+                <div id="cart-empty-message" class="text-center text-gray-500 italic">Votre panier est vide.</div>
+            </div>
+            <div class="mt-4 border-t pt-3">
+                <div class="flex justify-between font-bold text-lg">
+                    <span id="cart-total-label">Total :</span>
+                    <span id="cart-total-value">0 Ar</span>
+                </div>
+                <button id="checkout-btn" onclick="showOrderModal()" class="mt-4 w-full btn btn-primary disabled:opacity-50" disabled>Commander</button>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Modale de commande -->
+    <div id="order-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 hidden z-[100]">
+        <div class="bg-white rounded-lg p-8 w-full max-w-lg shadow-xl relative">
+            <h3 class="text-2xl font-display font-bold text-gray-900 mb-4" id="modal-title">Récapitulatif de la commande</h3>
+            
+            <div id="modal-body" class="space-y-4 mb-6">
+                <div id="modal-order-summary" class="bg-gray-50 p-4 rounded-lg">
+                    <!-- Résumé de la commande -->
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label for="table-number" class="text-sm font-medium text-gray-700" id="modal-table-label">Numéro de table :</label>
+                    <input type="number" id="table-number" placeholder="Entrez votre numéro de table" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                </div>
+            </div>
+
+            <div id="modal-actions" class="flex justify-end gap-3">
+                <button onclick="closeOrderModal()" id="modal-cancel-btn" class="flex-1 btn btn-secondary">Annuler</button>
+                <button onclick="confirmOrder()" id="modal-confirm-btn" class="flex-1 btn btn-primary disabled:opacity-50" disabled>Confirmer la commande</button>
+            </div>
+
+            <!-- Conteneur pour le QR code généré -->
+            <div id="qrcode-container" class="mt-6 flex justify-center"></div>
+        </div>
+    </div>
+    
+
+    <script>
+        // --- DATA ---
+        // Données du menu des plats et boissons
+        const menuData = {
+            'entrees': {
+                title: 'Entrées',
+                class: 'category-entrees',
+                items: [
+                    { id: 'entree_1', name: 'Velouté de potiron', description: 'fromage, crouton à l\'ail', price: 22000 },
+                    { id: 'entree_2', name: 'Potage de carotte au fromage', description: '', price: 22000 },
+                    { id: 'entree_3', name: 'Crème de tarot', description: '', price: 22000 },
+                    { id: 'entree_4', name: 'Nems salade verte', description: 'sauce arachide', price: 22000 },
+                    { id: 'entree_5', name: 'Salade de chèvre', description: 'fines herbe, salade verte', price: 25000 },
+                    { id: 'entree_6', name: 'Salade de chèvre chaude', description: '', price: 25000 },
+                    { id: 'entree_7', name: 'Crabe farci', description: '', price: 26000 },
+                    { id: 'entree_8', name: 'Calamars croustillants', description: 'salade verte', price: 25000 },
+                    { id: 'entree_9', name: 'Croquette de camembert', description: '', price: 26000 },
+                    { id: 'entree_10', name: 'Taboulé', description: '', price: 18000 },
+                    { id: 'entree_11', name: 'Salade César', description: '', price: 22000 }
+                ]
+            },
+            'plats': {
+                title: 'Plats',
+                class: 'category-plats',
+                items: [
+                    { id: 'plat_1', name: 'Porc grillée à la sicilienne', description: '', price: 30000 },
+                    { id: 'plat_2', name: 'Porc à la moutarde', description: '', price: 28000 },
+                    { id: 'plat_3', name: 'Escalope milanaise', description: '', price: 32000 },
+                    { id: 'plat_4', name: 'Brochettes de poulet', description: '', price: 30000 },
+                    { id: 'plat_5', name: 'Emincé de poulet tikka massala', description: '', price: 30000 },
+                    { id: 'plat_6', name: 'Emincé de poulet aux champignons', description: '', price: 32000 },
+                    { id: 'plat_7', name: 'Roulé de volaille au lard à la provençale', description: '', price: 32000 },
+                    { id: 'plat_8', name: 'Cuisse de canard confiete', description: 'sauce au choix', price: 36000 },
+                    { id: 'plat_9', name: 'Magret de canard', description: 'sauce au choix', price: 42000 },
+                    { id: 'plat_10', name: 'Magret de canard farci', description: 'aux champignons, sauce poivre', price: 32000 },
+                    { id: 'plat_11', name: 'Cocotte d\'agneau', description: '', price: 32000 }
+                ]
+            },
+            'plats_malagasy': {
+                title: 'Plats Malagasy',
+                class: 'category-plats-malagasy',
+                items: [
+                    { id: 'plat_m_1', name: 'Tilapia endasina sy saosy voatabia', description: 'Tilapia entier frit, sauce tomate', price: 28000 },
+                    { id: 'plat_m_2', name: 'Akoho Gasy rony', description: 'Bouillon de poulet fermier au gingembre', price: 25000 },
+                    { id: 'plat_m_3', name: 'Romazava Royale', description: 'ragout de brèdes, viandes mixtes', price: 29000 },
+                    { id: 'plat_m_4', name: 'Hen\'omby ritra Royale', description: 'bœuf braisé', price: 27000 }
+                ]
+            },
+            'desserts': {
+                title: 'Desserts',
+                class: 'category-desserts',
+                items: [
+                    { id: 'dessert_1', name: 'Assiette ou Salade de fruits', description: '', price: 15000 },
+                    { id: 'dessert_2', name: 'Affogato', description: '', price: 14000 },
+                    { id: 'dessert_3', name: 'Fruits flambés', description: '', price: 16000 },
+                    { id: 'dessert_4', name: 'Choux craquelin', description: 'glacé à la crème diplomate', price: 15000 },
+                    { id: 'dessert_5', name: 'Panna cotta', description: 'vanille, coulis', price: 15000 },
+                    { id: 'dessert_6', name: 'Fondant au chocolat', description: 'glace vanille (15 min)', price: 17000 },
+                    { id: 'dessert_7', name: 'Coupe glacée au caramel', description: '', price: 15000 },
+                    { id: 'dessert_8', name: 'Coupe glacée aux fruits', description: '', price: 16000 },
+                    { id: 'dessert_9', name: 'Nougat glacé', description: '', price: 15000 },
+                    { id: 'dessert_10', name: 'Coupe de Glace', description: '2 parfums au choix', price: 15000 }
+                ]
+            },
+            'accompagnements': {
+                title: 'Accompagnements',
+                class: 'category-accompagnements',
+                items: [
+                    { id: 'acc_1', name: 'Riz blanc', description: '', price: 7000 },
+                    { id: 'acc_2', name: 'Légumes sautés', description: '', price: 7000 },
+                    { id: 'acc_3', name: 'Pomme sautée', description: '', price: 7000 },
+                    { id: 'acc_4', name: 'Spaghetti', description: '', price: 7000 }
+                ]
+            },
+            'apero': {
+                title: 'Apéro',
+                class: 'category-apero',
+                items: [
+                    { id: 'apero_1', name: 'Pastis', description: '', price: 15000 },
+                    { id: 'apero_2', name: 'Ricard', description: '', price: 26000 },
+                    { id: 'apero_3', name: 'Tomate - perroquet - Mauresque', description: '', price: 14000 },
+                    { id: 'apero_4', name: 'Martini Blanc ou Rouge', description: '', price: 20000 },
+                    { id: 'apero_5', name: 'Kir au vin blanc', description: '', price: 16000 }
+                ]
+            },
+            'cocktails': {
+                title: 'Cocktails',
+                class: 'category-cocktails',
+                items: [
+                    { id: 'cocktail_1', name: 'San-Francisco', description: '', price: 19000 },
+                    { id: 'cocktail_2', name: 'Long Island', description: '', price: 23000 },
+                    { id: 'cocktail_3', name: 'Bora-bora', description: '', price: 15000 },
+                    { id: 'cocktail_4', name: 'Tom collins', description: '', price: 22000 },
+                    { id: 'cocktail_5', name: 'Mojito', description: '', price: 16000 }
+                ]
+            },
+            'rhum': {
+                title: 'Rhum',
+                class: 'category-rhum',
+                items: [
+                    { id: 'rhum_1', name: 'Gin Harpoon', description: '', price: 15000 },
+                    { id: 'rhum_2', name: 'Gin import', description: '', price: 26000 },
+                    { id: 'rhum_3', name: 'Vodka Absolut', description: '', price: 25000 },
+                    { id: 'rhum_4', name: 'Vodka Smirnoff', description: '', price: 18000 },
+                    { id: 'rhum_5', name: 'Rhum cuvée Blanche, Noir Prestige', description: '', price: 21000 }
+                ]
+            },
+            'bieres': {
+                title: 'Bières',
+                class: 'category-bieres',
+                items: [
+                    { id: 'biere_1', name: 'THB GM', description: '', price: 12000 },
+                    { id: 'biere_2', name: 'THB PM', description: '', price: 9000 },
+                    { id: 'biere_3', name: 'Fresh', description: '', price: 10000 },
+                    { id: 'biere_4', name: 'Cristal', description: '', price: 8000 },
+                    { id: 'biere_5', name: 'Gold 8', description: '', price: 10000 },
+                    { id: 'biere_6', name: 'Gold blande', description: '', price: 12000 }
+                ]
+            },
+            'eaux': {
+                title: 'Eau minérale',
+                class: 'category-eaux',
+                items: [
+                    { id: 'eau_1', name: 'Eau minérale GM', description: '', price: 8000 },
+                    { id: 'eau_2', name: 'Eau minérale PM', description: '', price: 5000 },
+                    { id: 'eau_3', name: 'Ranovisy', description: '50 Cl', price: 8000 }
+                ]
+            },
+            'chaudes': {
+                title: 'Boissons chaudes',
+                class: 'category-chaudes',
+                items: [
+                    { id: 'chaudes_1', name: 'Lait chaud', description: '', price: 7000 },
+                    { id: 'chaudes_2', name: 'Thé', description: '', price: 6000 },
+                    { id: 'chaudes_3', name: 'Chocolat chaud', description: '', price: 7000 },
+                    { id: 'chaudes_4', name: 'Café', description: '', price: 8000 },
+                    { id: 'chaudes_5', name: 'Café au lait', description: '', price: 7000 }
+                ]
+            },
+            'soft': {
+                title: 'Soft',
+                class: 'category-soft',
+                items: [
+                    { id: 'soft_1', name: 'Soft GM', description: '', price: 14000 },
+                    { id: 'soft_2', name: 'Soft PM', description: '', price: 7000 },
+                    { id: 'soft_3', name: 'Diabolo', description: '', price: 8000 },
+                    { id: 'soft_4', name: 'Sirop - eau vive PM', description: '', price: 7500 },
+                    { id: 'soft_5', name: 'Jus de fruit', description: '', price: 8000 }
+                ]
+            },
+            'whisky': {
+                title: 'Wisky',
+                class: 'category-whisky',
+                items: [
+                    { id: 'whisky_1', name: 'J&B', description: '', price: 24000 },
+                    { id: 'whisky_2', name: 'Ballantine\'s', description: '', price: 24000 },
+                    { id: 'whisky_3', name: 'Johnnie Walker Red Label', description: '', price: 24000 },
+                    { id: 'whisky_4', name: 'Johnnie Walker balck Label', description: '', price: 35000 },
+                    { id: 'whisky_5', name: 'Johnnie Walker double balck Label', description: '', price: 40000 }
+                ]
+            }
+        };
+
+        // Données de traduction
+        const translations = {
+            fr: {
+                menuTitle: 'Menu',
+                drinksTitle: 'Boissons',
+                cartTitle: 'Votre Panier',
+                emptyCart: 'Votre panier est vide.',
+                totalLabel: 'Total :',
+                checkoutBtn: 'Commander',
+                modalTitle: 'Récapitulatif de la commande',
+                modalTableLabel: 'Numéro de table :',
+                modalConfirmBtn: 'Confirmer la commande',
+                modalCancelBtn: 'Annuler',
+                orderSentMsg: 'Votre commande est envoyée !',
+                modalCloseBtn: 'Fermer',
+                entrees: 'Entrées',
+                plats: 'Plats',
+                plats_malagasy: 'Plats Malagasy',
+                desserts: 'Desserts',
+                accompagnements: 'Accompagnements',
+                apero: 'Apéro',
+                cocktails: 'Cocktails',
+                rhum: 'Rhum',
+                bieres: 'Bières',
+                eaux: 'Eau minérale',
+                chaudes: 'Boissons chaudes',
+                soft: 'Soft',
+                whisky: 'Whisky'
+            },
+            en: {
+                menuTitle: 'Menu',
+                drinksTitle: 'Drinks',
+                cartTitle: 'Your Cart',
+                emptyCart: 'Your cart is empty.',
+                totalLabel: 'Total:',
+                checkoutBtn: 'Checkout',
+                modalTitle: 'Order Summary',
+                modalTableLabel: 'Table Number:',
+                modalConfirmBtn: 'Confirm Order',
+                modalCancelBtn: 'Cancel',
+                orderSentMsg: 'Your order has been sent!',
+                modalCloseBtn: 'Close',
+                entrees: 'Starters',
+                plats: 'Main Courses',
+                plats_malagasy: 'Malagasy Dishes',
+                desserts: 'Desserts',
+                accompagnements: 'Side Dishes',
+                apero: 'Aperitifs',
+                cocktails: 'Cocktails',
+                rhum: 'Rum',
+                bieres: 'Beers',
+                eaux: 'Mineral Water',
+                chaudes: 'Hot Drinks',
+                soft: 'Soft Drinks',
+                whisky: 'Whiskey'
+            }
+        };
+
+// === Dictionnaire des traductions ===
+const itemTranslations = {
+    // --- MENU (food) ---
+    'Velouté de potiron': 'Pumpkin velouté',
+    "fromage, crouton à l'ail": 'cheese, garlic crouton',
+    'Potage de carotte au fromage': 'Carrot soup with cheese',
+    'Crème de tarot': 'Taro cream',
+    'Nems salade verte': 'Spring rolls with green salad',
+    'sauce arachide': 'peanut sauce',
+    'Salade de chèvre': 'Goat cheese salad',
+    'fines herbe, salade verte': 'herbs, green salad',
+    'Salade de chèvre chaude': 'Warm goat cheese salad',
+    'Crabe farci': 'Stuffed crab',
+    'Calamars croustillants': 'Crispy squid',
+    'Croquette de camembert': 'Camembert croquette',
+    'Taboulé': 'Tabbouleh',
+    'Salade César': 'Caesar salad',
+    'Porc grillée à la sicilienne': 'Sicilian-style grilled pork',
+    'Porc à la moutarde': 'Pork with mustard',
+    'Escalope milanaise': 'Milanese escalope',
+    'Brochettes de poulet': 'Chicken skewers',
+    'Emincé de poulet tikka massala': 'Chicken tikka masala',
+    'Emincé de poulet aux champignons': 'Chicken with mushrooms',
+    'Roulé de volaille au lard à la provençale': 'Poultry roll with bacon Provençal style',
+    'Cuisse de canard confiete': 'Confit duck leg',
+    'sauce au choix': 'sauce of your choice',
+    'Magret de canard': 'Duck breast',
+    'Magret de canard farci': 'Stuffed duck breast',
+    'aux champignons, sauce poivre': 'with mushrooms, pepper sauce',
+    "Cocotte d'agneau": 'Lamb stew',
+    'Riz blanc': 'White rice',
+    'Légumes sautés': 'Sautéed vegetables',
+    'Pomme sautée': 'Sautéed potatoes',
+    'Spaghetti': 'Spaghetti',
+    'Assiette ou Salade de fruits': 'Fruit plate or salad',
+    'Affogato': 'Affogato',
+    'Fruits flambés': 'Flambéed fruits',
+    'Choux craquelin': 'Craquelin choux',
+    'glacé à la crème diplomate': 'filled with diplomat cream',
+    'Panna cotta': 'Panna cotta',
+    'vanille, coulis': 'vanilla, coulis',
+    'Fondant au chocolat': 'Chocolate fondant',
+    'glace vanille (15 min)': 'vanilla ice cream (15 min)',
+    'Coupe glacée au caramel': 'Caramel sundae',
+    'Coupe glacée aux fruits': 'Fruit sundae',
+    'Nougat glacé': 'Frozen nougat',
+    'Coupe de Glace': 'Ice cream cup',
+    '2 parfums au choix': '2 flavors of your choice',
+
+    // --- BOISSONS (drinks) ---
+    'Eau minérale GM': 'Mineral water (large)',
+    'Eau minérale PM': 'Mineral water (small)',
+    'Lait chaud': 'Hot milk',
+    'Thé': 'Tea',
+    'Chocolat chaud': 'Hot chocolate',
+    'Café': 'Coffee',
+    'Café au lait': 'Coffee with milk',
+    'Kir au vin blanc': 'Kir with white wine',
+    'Martini Blanc ou Rouge': 'White or Red Martini',
+    'Jus de fruit': 'Fruit juice'
+};
+
+  
+        // --- ÉTAT DE L'APPLICATION ---
+        let currentLang = 'fr';
+        let currentView = 'food';
+        let cart = {};
+
+        // --- FONCTIONS UTILS ---
+        function getTranslation(key) {
+            return translations[currentLang][key];
+        }
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'MGA',
+                minimumFractionDigits: 0
+            }).format(price).replace('MGA', 'Ar');
+        }
+// Helpers de traduction
+function translateItemName(name, categoryId) {
+    if (currentLang !== 'en') return name;
+
+    if (currentView === 'food') {
+        // Traduire tous les noms sauf Plats Malagasy
+        if (categoryId === 'plats_malagasy') return name;
+        return itemTranslations[name] || name;
+    } else {
+        // Drinks: ne traduire que les noms listés
+        return itemTranslations[name] || name;
+    }
+}
+
+function translateItemDesc(desc) {
+    if (!desc) return '';
+    if (currentLang !== 'en') return desc;
+
+    if (currentView === 'food') {
+        // Menu: traduire toutes les descriptions (y compris Malagasy)
+        return itemTranslations[desc] || desc;
+    } else {
+        // Drinks: traduire uniquement si prévu dans le dictionnaire
+        return itemTranslations[desc] || desc;
+    }
+}
+
+// VERSION CORRIGÉE de renderMenu (remplace entièrement la tienne)
+function renderMenu() {
+    const menuContainer = document.getElementById('menu-container');
+    if (!menuContainer) return;
+    menuContainer.innerHTML = '';
+
+    const categoriesToRender = currentView === 'food'
+        ? ['entrees', 'plats', 'plats_malagasy', 'accompagnements', 'desserts']
+        : ['apero', 'cocktails', 'rhum', 'bieres', 'eaux', 'chaudes', 'soft', 'whisky'];
+
+    for (const categoryId of categoriesToRender) {
+        const category = menuData[categoryId];
+        const categoryCard = document.createElement('div');
+        categoryCard.className = `category-card p-6 rounded-xl shadow-lg ${category.class}`;
+
+        const itemsHTML = category.items.map(item => {
+            const displayName = translateItemName(item.name, categoryId);
+            const displayDesc = translateItemDesc(item.description);
+
+            return `
+                <div class="item-card bg-white p-4 rounded-lg shadow-sm flex items-center justify-between" onclick="addItemToCart('${item.id}')">
+                    <div class="flex-1">
+                        <h4 class="font-medium text-lg text-gray-900">${displayName}</h4>
+                        ${displayDesc ? `<p class="text-sm text-gray-500 italic">${displayDesc}</p>` : ''}
+                        <span class="text-sm price font-bold">${formatPrice(item.price)}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        categoryCard.innerHTML = `
+            <h3 class="text-2xl font-display font-semibold text-gray-900 mb-4">${getTranslation(categoryId) || category.title}</h3>
+            <div class="space-y-4">
+                ${itemsHTML}
+            </div>
+        `;
+        menuContainer.appendChild(categoryCard);
+    }
+}
+        
+        function renderCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartTotalValue = document.getElementById('cart-total-value');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            const emptyMessage = document.getElementById('cart-empty-message');
+
+            if (!cartItemsContainer || !cartTotalValue || !checkoutBtn || !emptyMessage) return;
+
+            // Réinitialiser le contenu dynamique du panier
+            const dynamicItems = Array.from(cartItemsContainer.children).filter(child => child.id !== 'cart-empty-message');
+            dynamicItems.forEach(item => item.remove());
+
+            let total = 0;
+            let hasItems = false;
+
+            for (const itemId in cart) {
+                const item = cart[itemId];
+                if (item.quantity > 0) {
+                    hasItems = true;
+                    total += item.price * item.quantity;
+                    const cartItemDiv = document.createElement('div');
+                    cartItemDiv.className = 'cart-item';
+                    cartItemDiv.innerHTML = `
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">${item.name}</h4>
+                            <span class="text-sm price">${formatPrice(item.price)}</span>
+                            <span class="text-sm text-gray-500"> x ${item.quantity}</span>
+                        </div>
+                        <div class="ml-4 flex items-center gap-2">
+                            <button onclick="decrementQuantity('${item.id}')" class="bg-gray-200 text-gray-600 w-6 h-6 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">-</button>
+                            <span class="font-medium text-gray-800 w-4 text-center">${item.quantity}</span>
+                            <button onclick="incrementQuantity('${item.id}')" class="bg-orange-500 text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-orange-600 transition-colors">+</button>
+                        </div>
+                    `;
+                    cartItemsContainer.insertBefore(cartItemDiv, emptyMessage);
+                }
+            }
+
+            if (!hasItems) {
+                emptyMessage.classList.remove('hidden');
+                checkoutBtn.disabled = true;
+            } else {
+                emptyMessage.classList.add('hidden');
+                checkoutBtn.disabled = false;
+            }
+
+            cartTotalValue.textContent = formatPrice(total);
+        }
+
+        // --- FONCTIONS DE GESTION DU PANIER ---
+        function getItemById(id) {
+            for (const categoryId in menuData) {
+                const category = menuData[categoryId];
+                const item = category.items.find(item => item.id === id);
+                if (item) {
+                    return item;
+                }
+            }
+            return null;
+        }
+        
+        // Nouvelle fonction pour ajouter un élément au panier d'un seul clic
+        function addItemToCart(itemId) {
+            const item = getItemById(itemId);
+            if (!item) return;
+
+            if (cart[itemId]) {
+                cart[itemId].quantity++;
+            } else {
+                cart[itemId] = { ...item, quantity: 1 };
+            }
+            updateUI();
+        }
+
+        function incrementQuantity(itemId) {
+            const item = getItemById(itemId);
+            if (!item) return;
+
+            if (cart[itemId]) {
+                cart[itemId].quantity++;
+            } else {
+                cart[itemId] = { ...item, quantity: 1 };
+            }
+            updateUI();
+        }
+
+        function decrementQuantity(itemId) {
+            if (cart[itemId] && cart[itemId].quantity > 0) {
+                cart[itemId].quantity--;
+                if (cart[itemId].quantity === 0) {
+                    delete cart[itemId];
+                }
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            renderMenu();
+            renderCart();
+        }
+
+        // --- FONCTIONS DE NAVIGATION ET TRADUCTION ---
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            const langToggleBtn = document.getElementById('lang-toggle-btn');
+            if (langToggleBtn) {
+                langToggleBtn.textContent = lang === 'fr' ? 'EN' : 'FR';
+            }
+
+            updateUIMetadata();
+            updateUI();
+        }
+
+        function updateUIMetadata() {
+            // Mettre à jour le titre principal et les textes statiques
+            const menuTitleEl = document.getElementById('menu-title');
+            if (menuTitleEl) {
+                if (currentView === 'food') {
+                    menuTitleEl.textContent = getTranslation('menuTitle');
+                } else {
+                    menuTitleEl.textContent = getTranslation('drinksTitle');
+                }
+            }
+            
+            const cartTitleEl = document.getElementById('cart-title');
+            if (cartTitleEl) {
+                cartTitleEl.textContent = getTranslation('cartTitle');
+            }
+            const emptyMessageEl = document.getElementById('cart-empty-message');
+            if (emptyMessageEl) {
+                emptyMessageEl.textContent = getTranslation('emptyCart');
+            }
+            const totalLabelEl = document.getElementById('cart-total-label');
+            if (totalLabelEl) {
+                totalLabelEl.textContent = getTranslation('totalLabel');
+            }
+            const checkoutBtnEl = document.getElementById('checkout-btn');
+            if (checkoutBtnEl) {
+                checkoutBtnEl.textContent = getTranslation('checkoutBtn');
+            }
+            
+            // Mettre à jour les textes de la modale
+            const modalTitleEl = document.getElementById('modal-title');
+            if (modalTitleEl) {
+                modalTitleEl.textContent = getTranslation('modalTitle');
+            }
+            const modalTableLabelEl = document.getElementById('modal-table-label');
+            if (modalTableLabelEl) {
+                modalTableLabelEl.textContent = getTranslation('modalTableLabel');
+            }
+            const modalConfirmBtnEl = document.getElementById('modal-confirm-btn');
+            if (modalConfirmBtnEl) {
+                modalConfirmBtnEl.textContent = getTranslation('modalConfirmBtn');
+            }
+            const modalCancelBtnEl = document.getElementById('modal-cancel-btn');
+            if (modalCancelBtnEl) {
+                modalCancelBtnEl.textContent = getTranslation('modalCancelBtn');
+            }
+
+            // Mettre à jour les liens de navigation
+            const menuLink = document.getElementById('menu-page-link');
+            const drinksLink = document.getElementById('drinks-page-link');
+            if (menuLink) {
+                menuLink.textContent = getTranslation('menuTitle');
+            }
+            if (drinksLink) {
+                drinksLink.textContent = getTranslation('drinksTitle');
+            }
+        }
+
+        function setView(view) {
+            currentView = view;
+            updateUIMetadata();
+            updateNavLinks();
+            updateUI();
+        }
+
+        function updateNavLinks() {
+            const menuLink = document.getElementById('menu-page-link');
+            const drinksLink = document.getElementById('drinks-page-link');
+            if (!menuLink || !drinksLink) return;
+
+            if (currentView === 'food') {
+                menuLink.classList.add('font-bold', 'text-gray-900');
+                menuLink.classList.remove('text-gray-600');
+                drinksLink.classList.add('text-gray-600');
+                drinksLink.classList.remove('font-bold', 'text-gray-900');
+            } else {
+                drinksLink.classList.add('font-bold', 'text-gray-900');
+                drinksLink.classList.remove('text-gray-600');
+                menuLink.classList.add('text-gray-600');
+                menuLink.classList.remove('font-bold', 'text-gray-900');
+            }
+        }
+        
+        document.getElementById('lang-toggle-btn').addEventListener('click', () => {
+            setLanguage(currentLang === 'fr' ? 'en' : 'fr');
+        });
+        document.getElementById('menu-page-link').addEventListener('click', () => {
+            setView('food');
+        });
+        document.getElementById('drinks-page-link').addEventListener('click', () => {
+            setView('drinks');
+        });
+
+        // --- GESTION DE LA MODALE ET DU QR CODE ---
+        function showOrderModal() {
+            const modal = document.getElementById('order-modal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            renderOrderSummary();
+        }
+
+        function closeOrderModal() {
+            const modal = document.getElementById('order-modal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function renderOrderSummary() {
+            const summaryContainer = document.getElementById('modal-order-summary');
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            const tableInput = document.getElementById('table-number');
+
+            if (!summaryContainer || !confirmBtn || !tableInput) return;
+            
+            let summaryHTML = `<h4 class="font-bold text-lg mb-2">${getTranslation('modalTitle')}</h4><ul class="list-disc pl-5">`;
+            let total = 0;
+
+            for (const itemId in cart) {
+                const item = cart[itemId];
+                summaryHTML += `<li>${item.name} x ${item.quantity} - ${formatPrice(item.price * item.quantity)}</li>`;
+                total += item.price * item.quantity;
+            }
+            summaryHTML += `</ul><div class="mt-4 font-bold text-orange-600">Total : ${formatPrice(total)}</div>`;
+            
+            summaryContainer.innerHTML = summaryHTML;
+            
+            const enableConfirmBtn = () => {
+                confirmBtn.disabled = !tableInput.value;
+            };
+            tableInput.addEventListener('input', enableConfirmBtn);
+            enableConfirmBtn(); // Vérifier l'état initial
+        }
+
+        function clearCart() {
+            cart = {};
+            updateUI();
+        }
+
+        function confirmOrder() {
+            const tableNumber = document.getElementById('table-number').value;
+            if (!tableNumber) return;
+
+            const modalActions = document.getElementById('modal-actions');
+            const qrcodeContainer = document.getElementById('qrcode-container');
+            if (!modalActions || !qrcodeContainer) return;
+
+            modalActions.innerHTML = '';
+            
+            qrcodeContainer.innerHTML = `<p class="text-center font-medium text-gray-600 mb-4">${getTranslation('orderSentMsg')}</p>`;
+            
+            generateQRCode(tableNumber);
+            
+            modalActions.innerHTML = `
+                <button onclick="closeOrderModal(); clearCart();" class="flex-1 btn btn-primary">
+                    ${getTranslation('modalCloseBtn')}
+                </button>
+            `;
+        }
+        
+        function generateQRCode(tableNumber) {
+            const qrcodeContainer = document.getElementById('qrcode-container');
+            if (!qrcodeContainer) return;
+            
+            // Créer une structure de données plus compacte pour le QR code
+            // Format: { table_number: 't', items: [['id', quantity], ['id', quantity]] }
+            const compactOrder = {
+                t: tableNumber,
+                i: Object.values(cart).map(item => [item.id, item.quantity])
+            };
+
+            const qrData = JSON.stringify(compactOrder);
+            
+            qrcodeContainer.innerHTML = '';
+            
+            new QRCode(qrcodeContainer, {
+                text: qrData,
+                width: 200,
+                height: 200,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.L
+            });
+        }
+        
+        // Initialiser l'application après le chargement complet de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            setView('food');
+        });
+
+    </script>
+</body>
+</html>
